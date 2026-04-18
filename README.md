@@ -18,7 +18,7 @@
 
 特点：
 - 为多个 source 启动多个 subagent 并行 ingest
-- 在 ingest 完成后按顺序串行 digest，避免共享写入冲突
+- 在 ingest 完成后把全部 `raw/...` 路径一次性传给 `wiki-digest` 做一轮批量 digest
 - 在 digest 后统一运行 lint 审计
 - 把“是否修复 lint 问题”的决定交给用户
 
@@ -76,7 +76,7 @@
 
 1. 接收一个或多个 source
 2. 为每个 source 并行执行 ingest
-3. 对成功产出的 `raw/...` 串行执行 digest
+3. 将成功产出的全部 `raw/...` 一次性传给 `wiki-digest` 执行一轮 digest
 4. 对更新后的 `wiki/` 运行 lint 审计
 5. 由用户决定是否继续执行 lint 修复
 

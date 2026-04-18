@@ -47,7 +47,7 @@ bash scripts/sync-push.sh <skill-name> "<commit message>"
    - 顶层工作流编排技能
    - 接收一个或多个 source
    - 使用多个 subagent 并行执行 ingest
-   - 对成功产出的 `raw/...` 串行执行 digest
+   - 将成功产出的全部 `raw/...` 一次性传给 `wiki-digest` 执行一轮 digest
    - 统一运行 lint 审计，并把是否修复交给用户决定
 
 2. `skills/raw-ingest/SKILL.md`
@@ -60,7 +60,7 @@ bash scripts/sync-push.sh <skill-name> "<commit message>"
    - 将 `raw/` 中的原始资料进一步拆解为 `wiki/` 中可复用、可链接的原子知识笔记
    - 明确要求更新 `wiki/index.md` 与 `wiki/log.md`
    - 将 `raw/` 视为只读事实来源，实际写操作应限制在 `wiki/`
-   - 在工作流模式下应只处理显式传入的单个 `raw/...` 路径
+   - 在工作流模式下应处理显式传入的一个或多个 `raw/...` 路径，并支持同一批次统一 digest
 
 4. `skills/wiki-lint/SKILL.md`
    - 对 `wiki/` 做健康检查，查找矛盾、过时内容、孤立页面与缺失 cross-ref
@@ -73,7 +73,7 @@ bash scripts/sync-push.sh <skill-name> "<commit message>"
 - 修改 `SKILL.md` 就是在直接修改技能行为
 - 大多数变更应局限在单个技能内，除非你在调整技能之间共享的工作流约定
 - 跨技能一致性主要体现在共享目录与流程契约上：`raw/`、`wiki/`、`wiki/index.md`、`wiki/log.md`
-- 多 source 处理时，推荐优先走 `wiki-workflow`；并行只发生在 ingest，digest 必须保持串行
+- 多 source 处理时，推荐优先走 `wiki-workflow`；ingest 可并行，随后应把全部成功产出的 `raw/...` 一次性传给 `wiki-digest` 做一轮 digest
 
 ## 编辑时应关注的约束
 

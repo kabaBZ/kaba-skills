@@ -1,13 +1,13 @@
 ---
 name: wiki-workflow
-description: 接收一个或多个原始信息源，使用多个 subagent 并行 ingest，随后串行 digest 入库并执行 lint，再由用户决定是否修复。
+description: 接收一个或多个原始信息源，使用多个 subagent 并行 ingest，随后将全部 raw 路径一次性传给 wiki-digest 入库并执行 lint，再由用户决定是否修复。
 argument-hint: <一个或多个资料来源>
 allowed-tools: [Agent, AskUserQuestion, Read, Write, Edit, Glob, Grep, Bash]
 ---
 
 # 工作流编排
 
-用于把一个或多个原始信息源串成完整知识入库流程：先并行 ingest，再串行 digest，最后做 lint 审计，顺序不可更改，执行ingest和digest时各自的质量和要求不变，并把“是否修复 lint 问题”的决定交给用户。
+用于把一个或多个原始信息源串成完整知识入库流程：先并行 ingest，再将成功产出的全部 raw 路径一次性传给 `wiki-digest` 做一次 digest，最后做 lint 审计，顺序不可更改，执行 ingest 和 digest 时各自的质量和要求不变，并把“是否修复 lint 问题”的决定交给用户。
 
 你是一个**薄编排层**，不应重写 `raw-ingest`、`wiki-digest`、`wiki-lint` 的内部规则，而应复用它们已有的职责边界：
 
@@ -18,7 +18,7 @@ allowed-tools: [Agent, AskUserQuestion, Read, Write, Edit, Glob, Grep, Bash]
 ## 核心原则
 
 - 多 source 时，只对 ingest 阶段并行化。
-- digest 必须串行执行，避免并发写 `wiki/index.md`、`wiki/log.md` 和共享页面造成冲突。
+- ingest 完成后，将成功产出的全部 `raw/...` 路径一次性传给 `wiki-digest` 执行一次 digest，而不是逐个串行调用。
 - lint 默认只做审计，不直接修复。
 - 只有在用户明确确认后，才进入 lint 修复阶段。
 - 如果某些 source ingest 失败，先汇总成功项与失败项，再决定是否继续处理成功项。
@@ -58,15 +58,15 @@ allowed-tools: [Agent, AskUserQuestion, Read, Write, Edit, Glob, Grep, Bash]
    - 询问用户是只继续成功项，还是先停下
 3. 如果全部成功，则继续进入 digest。
 
-### 阶段 3：串行 digest
+### 阶段 3：一次性 digest
 
-1. 对成功产出的 `raw/...` 路径逐个执行 digest，一次只处理一个。
-2. 调用时应显式传入对应 raw 路径，不要依赖“最近文件”推断。
-3. 每轮 digest 后，记录：
+1. 将成功产出的全部 `raw/...` 路径一次性传给 `wiki-digest`，执行一次 digest。
+2. 调用时应显式传入这些 raw 路径，不要依赖“最近文件”推断。
+3. digest 输出应汇总返回：
    - 新建或更新了哪些 `wiki/...` 页面
    - 是否更新了 `wiki/index.md`
    - 是否更新了 `wiki/log.md`
-4. 所有 digest 完成后，再进入 lint。
+4. 这次 digest 完成后，再进入 lint。
 
 ### 阶段 4：lint 审计
 
@@ -101,7 +101,7 @@ allowed-tools: [Agent, AskUserQuestion, Read, Write, Edit, Glob, Grep, Bash]
 
 1. source 列表确认
 2. ingest 结果汇总
-3. digest 结果汇总
+3. 批量 digest 结果汇总
 4. lint 审计摘要
 5. 询问是否修复
 
