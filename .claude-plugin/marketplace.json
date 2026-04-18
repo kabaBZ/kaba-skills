@@ -1,0 +1,34 @@
+{
+  "name": "kaba-skills",
+  "displayName": "kaba Skills Collection",
+  "description": "Just some skills for another people's personal use.Obsidian file sorting.",
+  "version": "0.0.1",
+  "owner": {
+    "name": "kabaBZ",
+    "url": "https://github.com/kabaBZ"
+  },
+  "repository": "https://github.com/kabaBZ/kaba-skills",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "paper-reading",
+    "content-casting",
+    "visualization",
+    "sorting",
+    "productivity",
+    "personal wiki"
+  ],
+  "categories": [
+    "Productivity",
+    "Research",
+    "Content Digesting"
+  ],
+  "plugins": [
+    {
+      "name": "kaba-skills",
+      "description": "kaba's personal Claude Code skills collection",
+      "version": "0.0.1",
+      "source": "./"
+    }
+  ]
+}

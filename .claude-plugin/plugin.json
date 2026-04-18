@@ -1,0 +1,20 @@
+{
+  "name": "kaba-skills",
+  "version": "0.0.1",
+  "description": "Just some skills for another people's personal use.Obsidian file sorting.",
+  "author": {
+    "name": "kababz",
+    "url": "https://github.com/kabaBZ"
+  },
+  "repository": "https://github.com/kabaBZ/kaba-skills",
+  "keywords": [
+    "skills",
+    "paper-reading",
+    "content-casting",
+    "visualization",
+    "sorting",
+    "productivity",
+    "personal wiki"
+  ],
+  "skills": "./skills"
+}
